@@ -1,2 +1,2 @@
 # json_talk
-try for JSON language - not real language - more like a small talk 
+try for JSON language - no real language - more like a small talk 
