@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body>
+<table>
+    <tr><td>ba (bigger as)</td><td>=</td><td>></td></tr>
+    <tr><td>bea (biggerequal as)</td><td>=</td><td>>=</td></tr>
+    <tr><td>sa (smaller as)</td><td>=</td><td><=</td></tr>
+    <tr><td>sea (smallereqal as)</td><td>=</td><td><=</td></tr>
+    <tr><td>ne (not eqal)</td><td>=</td><td>!=</td></tr>
+    <tr><td>e (eqal)</td><td>=</td><td>=</td></tr>
+</table>
+<script type="text/javascript">
+/*
+    Help:
+        ba (bigger as)          =       >
+        bea (biggereqal as)     =       >=
+        sa (smaller as)         =       <
+        sea (smallereqal as)    =       <=
+        ne (not eqal)           =       !=
+        e (eqal)                =       =
+
+*/
+var json_command = '['+
+    '{' +
+        '"id": "arib-de_location_erdgeschoss",'+
+        '"command" : {'+
+            '"IF" :'+
+                '{'+
+                    '"ba" : ['+
+                        '"VISITS",'+
+                        '3'+
+                    ']'+
+                '},'+
+            '"THEN" : {'+
+                    '"show" : "CONTENTID"'+
+            '}'+
+        '}'+
+    '}'+
+']';
+
+obj = JSON.parse(json_command);
+//console.log(obj);
+
+
+///
+var points = 4,
+    visits = 2,
+    db_value = 0,
+    commands = ['ba','sa','sea','bea','ne','e'];
+
+var jl = {
+    ba : function(v1,v2) {
+        if (v1 > v2) return true;
+    },
+    bea : function(v1,v2) {
+        if (v1 >= v2) return true;
+    },
+    sa : function(v1,v2) {
+        if (v1 < v2) return true;
+    },
+    sea : function(v1,v2) {
+        if (v1 <= v2) return true;
+    },
+    ne : function(v1,v2) {
+        if (v1 != v2) return true;
+    },
+    e : function(v1,v2) {
+        if (v1==v2) return true;
+    }
+}
+
+$.each(obj, function() {
+    if(typeof this.command.IF == 'object') {
+
+        for(i=0; i< commands.length;i++) {
+            c = commands[i];
+            if(typeof this.command.IF[c] == 'object' && this.command.IF[c][0]) {
+                switch (this.command.IF[c][0]) {
+                    case 'POINTS':
+                        db_value = points;
+                        break;
+                    case 'VISITS':
+                        db_value = visits;
+                        break;
+                }
+                if(jl[c](db_value,this.command.IF[c][1])) {
+                    document.write('YES::' + db_value + ' ' + c + ' ' + this.command.IF[c][1]);
+                    console.log(this.command.THEN);
+                    document.write('<br>SHOW:' + this.command.THEN.show);
+                } else {
+                    document.write('NO::' + db_value + ' ' + c + ' ' + this.command.IF[c][1]);
+                }
+            }
+        }
+    }
+});
+
+</script>
+</body>
+</html>
